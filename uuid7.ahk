@@ -70,23 +70,7 @@ PasteText(text) {
     try {
         uuid := GetUuid7(Uuid7Script)
 
-        yaml := "---`n"
-            . "note_type: `n"
-            . "note_status: inbox`n"
-            . "note_version: v`n"
-            . "uuid: " uuid "`n"
-            . "aliases: []`n"
-            . "tags: []`n"
-            . "note_creation_date: `n"
-            . "last_modified_date: `n"
-            . "schema_version: v0.1.0`n"
-            . "layer: `n"
-            . "unity_level: `n"
-            . "vector_direction: `n"
-            . "register: `n"
-            . "register_mode: `n"
-            . "pillar: `n"
-            . "---`n`n"
+        yaml := " " ; leaving blank for git
 
         WinActivate("ahk_id " hwnd)
         Sleep(30)
@@ -97,3 +81,4 @@ PasteText(text) {
     }
     BlockInput("Off")
 }
+
