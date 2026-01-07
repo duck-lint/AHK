@@ -1,5 +1,5 @@
 ; === CONFIG ===
-Uuid7Script := "C:\Users\madis\Desktop\VS Code Workspace\Python\tools_uuid7.py"
+Uuid7Script := "path\Python\tools_uuid7.py"
 
 ; === UUIDv7 generator via python script ===
 GetUuid7(scriptPath) {
@@ -377,3 +377,4 @@ PasteText(text) {
         MsgBox("yamlc failed:`n`n" e.Message)
     }
 }
+
