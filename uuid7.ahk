@@ -91,7 +91,6 @@ PasteText(text) {
             . "schema_version: v0.1.2`n"
             . "note_type: `n"
             . "note_status: `n"
-            . "note_creation_date: `n"
             . "aliases: []`n"
             . "tags: []`n"
             . "layer: `n"
@@ -133,7 +132,7 @@ PasteText(text) {
             . "schema_version: v0.1.2`n"
             . "note_type: journal_entry`n"
             . "note_status: journal`n"
-            . "note_creation_date: `n"
+            . "journal_entry_date: `n"
             . 'layer: "1"`n'
             . "unity_level: model`n"
             . "vector_direction: critical`n"
@@ -186,7 +185,7 @@ PasteText(text) {
             . "schema_version: v0.1.2`n"
             . "note_type: journal_entry`n"
             . "note_status: journal`n"
-            . "note_creation_date: `n"
+            . "journal_entry_date: `n"
             . 'layer: "1"`n'
             . "unity_level: model`n"
             . "vector_direction: critical`n"
