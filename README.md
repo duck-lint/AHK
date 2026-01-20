@@ -1,3 +1,9 @@
+# Put main.ahk into startup folder
+```
+win+R
+shell:startup
+```
+
 ## Prefilled frontmatter strings in uuid7 script are specific to custom YAML key schema
 
 # AHK Utilities
