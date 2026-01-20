@@ -1,3 +1,5 @@
+## Prefilled frontmatter strings in uuid7 script are specific to custom YAML key schema
+
 # AHK Utilities
 
 ## Backfill YAML frontmatter
