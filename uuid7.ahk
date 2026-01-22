@@ -225,7 +225,6 @@ PasteText(text) {
             . "schema_version: v0.1.2`n"
             . "note_type: entity`n"
             . "note_status: indexed`n"
-            . "note_creation_date: `n"
             . "aliases: []`n"
             . "tags: []`n"
             . 'layer: "1"`n'
