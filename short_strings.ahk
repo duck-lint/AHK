@@ -56,7 +56,6 @@
 ::incl::including
 ::mgmt::management
 ::havent::haven't
-::i::I
 ::yday::yesterday
 ::re;::regarding
 ::;ffj::Freeform Journaling:
@@ -64,7 +63,6 @@
 ::shes::she's
 ::hes::he's
 ::qm::quantum mechanics
-::hers::her's
 ::incl::including
 ::noti::notification
 ::wd::Work Day
