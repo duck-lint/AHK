@@ -97,6 +97,7 @@
 ::alt::alternate
 ::pwrshl::PowerShell
 ::powershell::PowerShell
+::mtg::meeting
 
 ; ── Arrows ─────────────────────────────────────
 ::-->::→
