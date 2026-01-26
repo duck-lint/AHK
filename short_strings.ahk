@@ -4,9 +4,6 @@
 ::w/::with
 ::w/o::without
 ::w/r/t::with respect to
-::i.e.::i.e.
-::e.g.::e.g.
-::etc.::etc.
 ::tbh::to be honest
 ::imo::in my opinion
 ::idk::I don't know
@@ -34,7 +31,6 @@
 ::isnt::isn't
 ::youre::you're
 ::wasnt::wasn't
-:*?:---::—
 ::addr::address
 ::rec::receive / recommendation / record
 ::sched::schedule
@@ -58,16 +54,12 @@
 ::havent::haven't
 ::yday::yesterday
 ::re;::regarding
-::;ffj::Freeform Journaling:
-::;tj::Trading Journal:
 ::shes::she's
 ::hes::he's
 ::qm::quantum mechanics
 ::incl::including
 ::noti::notification
 ::wd::Work Day
-:::)::🙂
-:::D::😃
 ::100p::💯
 ::tu::👍
 ::lets::let's
