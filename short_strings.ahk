@@ -76,7 +76,7 @@
 ::mon::Monday
 ::tues::Tuesday
 ::wed::Wednesday
-::thur::Thursday
+::thurs::Thursday
 ::fri::Friday
 ::satur::Saturday
 ::sund::Sunday
