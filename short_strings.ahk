@@ -90,6 +90,7 @@
 ::pwrshl::PowerShell
 ::powershell::PowerShell
 ::mtg::meeting
+::youll::you'll
 
 ; ── Arrows ─────────────────────────────────────
 ::-->::→
