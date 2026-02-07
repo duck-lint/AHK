@@ -190,7 +190,7 @@ PasteText(text) {
             . "unity_level: model`n"
             . "vector_direction: critical`n"
             . "register: indexical`n"
-            . "register_mode: experiential_commitment`n"
+            . "register_mode: experiential`n"
             . "pillar: dynamic_coherence`n"
             . "---`n`n"
 
