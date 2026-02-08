@@ -91,6 +91,7 @@
 ::powershell::PowerShell
 ::mtg::meeting
 ::youll::you'll
+::appt::appointment
 
 ; ── Arrows ─────────────────────────────────────
 ::-->::→
