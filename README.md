@@ -1,4 +1,3 @@
-```markdown
 # AHK Workflow Utilities
 
 Small AutoHotkey + Python utilities for reducing repetitive admin friction and enforcing structured metadata in knowledge workflows.
