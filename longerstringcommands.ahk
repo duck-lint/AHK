@@ -97,3 +97,35 @@
     Clipboard := saved
     saved := ""
 }
+
+^+/: : {  ; Ctrl+Shift+/ → Windows slashes → forward slashes
+    saved := ClipboardAll()
+    ClipWait 0.2
+    clip := A_Clipboard
+
+    if RegExMatch(clip, "i)^[A-Z]:\\") || RegExMatch(clip, "^\\\\") {
+        A_Clipboard := StrReplace(clip, "\", "/")
+    } else {
+        A_Clipboard := clip
+    }
+
+    Send "{Blind}^v"
+    Clipboard := saved
+    saved := ""
+}
+
+^+\:: {   ; Ctrl+Shift+\ → forward slashes → Windows slashes
+    saved := ClipboardAll()
+    ClipWait 0.2
+    clip := A_Clipboard
+
+    if RegExMatch(clip, "i)^[A-Z]:/") || RegExMatch(clip, "^//") {
+        A_Clipboard := StrReplace(clip, "/", "\")
+    } else {
+        A_Clipboard := clip
+    }
+
+    Send "{Blind}^v"
+    Clipboard := saved
+    saved := ""
+}
