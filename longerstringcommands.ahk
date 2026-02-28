@@ -98,15 +98,13 @@
     saved := ""
 }
 
-^+/: : {  ; Ctrl+Shift+/ → Windows slashes → forward slashes
+^+/:: {                                      ; Ctrl+Shift+/ → backslashes to forward slashes (paths only)
     saved := ClipboardAll()
     ClipWait 0.2
     clip := A_Clipboard
 
     if RegExMatch(clip, "i)^[A-Z]:\\") || RegExMatch(clip, "^\\\\") {
         A_Clipboard := StrReplace(clip, "\", "/")
-    } else {
-        A_Clipboard := clip
     }
 
     Send "{Blind}^v"
@@ -114,15 +112,13 @@
     saved := ""
 }
 
-^+\:: {   ; Ctrl+Shift+\ → forward slashes → Windows slashes
+^+\:: {                                     ; Ctrl+Shift+\ → forward slashes to backslashes (paths only)
     saved := ClipboardAll()
     ClipWait 0.2
     clip := A_Clipboard
 
     if RegExMatch(clip, "i)^[A-Z]:/") || RegExMatch(clip, "^//") {
         A_Clipboard := StrReplace(clip, "/", "\")
-    } else {
-        A_Clipboard := clip
     }
 
     Send "{Blind}^v"
