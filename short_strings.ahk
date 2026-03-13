@@ -93,6 +93,7 @@
 ::youll::you'll
 ::appt::appointment
 ::atm::at the moment
+::whats::what's
 
 ; ── Arrows ─────────────────────────────────────
 ::-->::→
