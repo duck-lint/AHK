@@ -1,0 +1,285 @@
+{
+  "repository": "duck-lint/AHK",
+  "extraction_date": "2026-03-20",
+  "repository_summary": "A personal productivity toolkit combining AutoHotkey v2 (keyboard macros, hotstrings, clipboard transformers) with Python (UUIDv7 generation, bulk YAML frontmatter backfill) to reduce repetitive friction in structured knowledge management workflows. The repo contains ~1,100 lines across 8 files with no external dependencies, no test infrastructure, and no CI/CD. It targets Windows-based Obsidian/markdown vault workflows with an emphasis on deterministic IDs, schema-versioned metadata, safe mutation via dry-run, and inspectable tooling.",
+  "atomic_skills": [
+    {
+      "id": "S01",
+      "skill": "Implementing UUIDv7 generation from scratch using bit manipulation",
+      "evidence": "tools_uuid7.py builds a 128-bit UUID from 48-bit ms timestamp, 12-bit counter, version/variant bits, and 62-bit random suffix using bitwise shifts and masks (line 95: `u = (ts_ms << 80) | (0x7 << 76) | (ctr << 64) | (0x2 << 62) | rand_b`).",
+      "evidence_strength": "strong",
+      "files": ["tools_uuid7.py:88-104"]
+    },
+    {
+      "id": "S02",
+      "skill": "Persisting monotonic state across process invocations via JSON file",
+      "evidence": "tools_uuid7.py reads/writes `{last_ts_ms, last_counter}` to a JSON state file in LOCALAPPDATA between separate runs to guarantee cross-invocation monotonicity.",
+      "evidence_strength": "strong",
+      "files": ["tools_uuid7.py:10-16", "tools_uuid7.py:52-61", "tools_uuid7.py:98-99"]
+    },
+    {
+      "id": "S03",
+      "skill": "Implementing file-based locking for process synchronization",
+      "evidence": "tools_uuid7.py uses OS-level exclusive file creation (`os.O_CREAT | os.O_EXCL`) with a retry loop (~2s timeout at 10ms intervals) and cleanup in a `finally` block to prevent concurrent state corruption.",
+      "evidence_strength": "strong",
+      "files": ["tools_uuid7.py:38-49", "tools_uuid7.py:106-111"]
+    },
+    {
+      "id": "S04",
+      "skill": "Handling clock skew and counter overflow in time-ordered ID generation",
+      "evidence": "tools_uuid7.py pins timestamp to `last_ts` when the system clock goes backwards (line 75) and spins waiting for the next millisecond on counter overflow at 4096 IDs/ms (lines 77-86).",
+      "evidence_strength": "strong",
+      "files": ["tools_uuid7.py:69-86"]
+    },
+    {
+      "id": "S05",
+      "skill": "Writing atomic file mutations using temp-file-plus-rename pattern",
+      "evidence": "backfill_yaml.py `write_atomic()` creates a `NamedTemporaryFile` in the target directory, writes data, then calls `os.replace()` for an atomic swap, with cleanup of the temp file in a `finally` block.",
+      "evidence_strength": "strong",
+      "files": ["backfill_yaml.py:132-149"]
+    },
+    {
+      "id": "S06",
+      "skill": "Designing CLI tools with dry-run-by-default safety semantics",
+      "evidence": "backfill_yaml.py uses `argparse` with a mutually exclusive group (`--dry_run` / `--apply`) that defaults to dry-run when neither is specified (line 47-48). Dry-run prints what would change without writing.",
+      "evidence_strength": "strong",
+      "files": ["backfill_yaml.py:20-50", "backfill_yaml.py:204-207"]
+    },
+    {
+      "id": "S07",
+      "skill": "Implementing YAML frontmatter detection heuristics for markdown files",
+      "evidence": "backfill_yaml.py `has_yaml_frontmatter()` finds the first non-empty line, checks for `---`, scans up to 200 subsequent lines for a closing `---` that also contains at least one colon (key-value pair), returning a boolean.",
+      "evidence_strength": "strong",
+      "files": ["backfill_yaml.py:59-81"]
+    },
+    {
+      "id": "S08",
+      "skill": "Building bulk file-processing pipelines with statistics tracking and error resilience",
+      "evidence": "backfill_yaml.py walks a directory tree, filters by extension and glob exclusions, tracks six categories of counts (scanned, skipped_hidden_dir, skipped_excluded, skipped_has_yaml, modified, errors), respects a max_files cap, and prints a structured summary.",
+      "evidence_strength": "strong",
+      "files": ["backfill_yaml.py:152-243"]
+    },
+    {
+      "id": "S09",
+      "skill": "Invoking subprocesses with timeout, output capture, and format validation",
+      "evidence": "backfill_yaml.py `generate_uuid()` runs the Python UUID script via `subprocess.run` with a 5-second timeout, captures stdout/stderr, applies both general UUID regex and strict UUIDv7 regex validation before returning. The AHK side (`GetUuid7`) similarly uses `WScript.Shell.Exec` with a 2-second polling timeout.",
+      "evidence_strength": "strong",
+      "files": ["backfill_yaml.py:84-105", "uuid7.ahk:5-37"]
+    },
+    {
+      "id": "S10",
+      "skill": "Designing schema-versioned YAML metadata templates for multiple note types",
+      "evidence": "uuid7.ahk defines 8 hotstring-triggered YAML templates (basic, journal, dream-journal, entity, bridge-mapping, tension, creative, UUID-only), each with `schema_version` and `note_version` fields and type-specific metadata schemas (e.g., journal has dream_motif/dream_lucidity; entity has canonical_name/relationship).",
+      "evidence_strength": "strong",
+      "files": ["uuid7.ahk:79-378"]
+    },
+    {
+      "id": "S11",
+      "skill": "Implementing clipboard-based text insertion to avoid keystroke loss in Electron apps",
+      "evidence": "uuid7.ahk `PasteText()` saves the existing clipboard, sets new text, waits for `ClipWait(1)`, sends Ctrl+V, then restores the original clipboard in a `finally` block. This avoids the dropped-keystroke problem in apps like VS Code and Obsidian.",
+      "evidence_strength": "strong",
+      "files": ["uuid7.ahk:40-51"]
+    },
+    {
+      "id": "S12",
+      "skill": "Orchestrating cross-language tool pipelines (AutoHotkey calling Python via COM)",
+      "evidence": "uuid7.ahk instantiates `ComObject('WScript.Shell')`, formats a Python command, polls `exec.Status` with a timeout loop, reads stdout/stderr, and validates the result—all to bridge AHK hotstring triggers to Python-based UUID generation.",
+      "evidence_strength": "strong",
+      "files": ["uuid7.ahk:5-37"]
+    },
+    {
+      "id": "S13",
+      "skill": "Managing window focus and input blocking during automated text insertion",
+      "evidence": "uuid7.ahk captures `hwnd` via `WinGetID('A')`, re-activates the window after Python returns, wraps the paste in `BlockInput('On')`/`BlockInput('Off')` with `try`/`finally`, and uses `Critical(2000)` to prevent interruption during insertion.",
+      "evidence_strength": "strong",
+      "files": ["uuid7.ahk:56-77"]
+    },
+    {
+      "id": "S14",
+      "skill": "Building Unicode symbol and Greek letter hotstring mappings for math/logic notation",
+      "evidence": "short_strings.ahk defines ~80 hotstring expansions mapping ASCII triggers to Unicode characters: Greek letters (alpha→α through omega→ω, plus uppercase variants), math operators (≠, ≈, ±, ∞, ∑, ∏, ∫), set notation (∈, ∉, ⊂, ∩, ∪, ∀, ∃), and arrows (→, ←, ↔, ⇒, ⇔).",
+      "evidence_strength": "strong",
+      "files": ["short_strings.ahk:98-197"]
+    },
+    {
+      "id": "S15",
+      "skill": "Implementing clipboard-based text case transformations via hotkeys",
+      "evidence": "longerstringcommands.ahk provides four clipboard-transform hotkeys: UPPERCASE (`StrUpper`), lowercase (`StrLower`), Title Case (`StrTitle`), and Capitalize Each Word (via `RegExReplace` with capture groups). Each saves/restores the clipboard.",
+      "evidence_strength": "strong",
+      "files": ["longerstringcommands.ahk:68-99"]
+    },
+    {
+      "id": "S16",
+      "skill": "Implementing LaTeX math-mode wrapping for selected text",
+      "evidence": "longerstringcommands.ahk Ctrl+Shift+M copies the selection, replaces spaces with `\\ ` for LaTeX compatibility, wraps the result in `$...$`, and pastes it back, with clipboard backup/restore.",
+      "evidence_strength": "strong",
+      "files": ["longerstringcommands.ahk:39-62"]
+    },
+    {
+      "id": "S17",
+      "skill": "Normalizing Windows/Unix path separators in clipboard text",
+      "evidence": "longerstringcommands.ahk provides two hotkeys: Ctrl+Shift+/ (backslash→forward slash) and Ctrl+Shift+\\ (forward slash→backslash), each gated by a regex check for Windows-style paths (`^[A-Z]:\\\\` or `^\\\\\\\\`) before transforming.",
+      "evidence_strength": "strong",
+      "files": ["longerstringcommands.ahk:101-127"]
+    },
+    {
+      "id": "S18",
+      "skill": "Implementing double-tap keyboard detection with configurable timing window",
+      "evidence": "doubletapspaceperiod.ahk tracks `lastSpaceTick` and `spaceIsDown` state, checks `A_PriorKey` and elapsed time against a 188ms window, respects modifier keys, handles auto-repeat suppression, and converts double-space into period+space via `SendInput '{BS 2}. '`.",
+      "evidence_strength": "strong",
+      "files": ["doubletapspaceperiod.ahk:1-43"]
+    },
+    {
+      "id": "S19",
+      "skill": "Formatting date/time strings in multiple locale-aware patterns",
+      "evidence": "longerstringcommands.ahk defines four date/time hotstrings using `FormatTime(A_Now, ...)`: ISO date (`yyyy-MM-dd`), time (`HH:mm`), datetime (`yyyy-MM-dd HH:mm:ss`), and full natural-language format (`dddd, MMMM d, yyyy 'at' h:mm tt`).",
+      "evidence_strength": "strong",
+      "files": ["longerstringcommands.ahk:11-33"]
+    },
+    {
+      "id": "S20",
+      "skill": "Structuring AutoHotkey scripts as modular includes with a single entry point",
+      "evidence": "main.ahk sets `#Requires AutoHotkey v2.0`, `#SingleInstance Force`, configures the working directory, and uses `#Include` to load four separate functional modules. Comments in main.ahk warn to disable directives in included files.",
+      "evidence_strength": "moderate",
+      "files": ["main.ahk:1-11"]
+    },
+    {
+      "id": "S21",
+      "skill": "Applying regex-based UUID format validation at both generation and consumption boundaries",
+      "evidence": "tools_uuid7.py validates the generated UUID against a strict UUIDv7 regex before printing (lines 118-124). backfill_yaml.py re-validates with both a general UUID regex and a UUIDv7-specific regex after subprocess output capture (lines 95-103). uuid7.ahk performs the same two-stage validation in AHK (lines 30-34).",
+      "evidence_strength": "strong",
+      "files": ["tools_uuid7.py:117-124", "backfill_yaml.py:10-17", "backfill_yaml.py:95-103", "uuid7.ahk:30-34"]
+    },
+    {
+      "id": "S22",
+      "skill": "Designing glob-based file exclusion with sensible defaults for vault tooling",
+      "evidence": "backfill_yaml.py `normalize_excludes()` merges user-supplied `--exclude` patterns with hardcoded defaults (`.obsidian/**`, `.git/**`), normalizes path separators, and applies `fnmatch.fnmatchcase` per file.",
+      "evidence_strength": "strong",
+      "files": ["backfill_yaml.py:53-56", "backfill_yaml.py:185-186"]
+    },
+    {
+      "id": "S23",
+      "skill": "Writing structured project documentation with explicit design principles and usage examples",
+      "evidence": "README.md states four design principles, explains each component with rationale ('Why UUIDv7?'), provides copy-pasteable PowerShell commands for dry-run/apply/capped runs, and documents path configuration steps.",
+      "evidence_strength": "moderate",
+      "files": ["README.md:1-93"]
+    }
+  ],
+  "skill_clusters": [
+    {
+      "cluster": "Deterministic ID generation and state management",
+      "skills": ["S01", "S02", "S03", "S04", "S21"],
+      "note": "Cohesive implementation of UUIDv7 from bit-level construction through persistence, locking, edge-case handling, and multi-boundary validation."
+    },
+    {
+      "cluster": "Safe bulk file mutation tooling",
+      "skills": ["S05", "S06", "S07", "S08", "S22"],
+      "note": "CLI design with dry-run-by-default, atomic writes, frontmatter detection, statistics, and exclusion—all oriented toward safe vault-wide operations."
+    },
+    {
+      "cluster": "Cross-language automation orchestration",
+      "skills": ["S09", "S11", "S12", "S13", "S20"],
+      "note": "AHK-to-Python bridge via COM, clipboard-safe paste, window management, and modular script architecture."
+    },
+    {
+      "cluster": "Keyboard productivity and text transformation",
+      "skills": ["S14", "S15", "S16", "S17", "S18", "S19"],
+      "note": "Unicode symbol insertion, case transforms, LaTeX wrapping, path normalization, double-tap detection, and date/time formatting."
+    },
+    {
+      "cluster": "Schema-driven knowledge management metadata",
+      "skills": ["S10", "S23"],
+      "note": "Versioned YAML templates for distinct note types plus documented design rationale."
+    }
+  ],
+  "evidence_basis": {
+    "primary_sources": [
+      "tools_uuid7.py — Python UUIDv7 generator with monotonic state, locking, and validation",
+      "backfill_yaml.py — Python bulk YAML frontmatter backfill CLI with dry-run, atomic writes, and statistics",
+      "uuid7.ahk — AHK hotstrings for UUID and 8 YAML template types, clipboard-safe paste, cross-language bridge",
+      "short_strings.ahk — ~80 Unicode/Greek/math/logic hotstring mappings",
+      "longerstringcommands.ahk — date/time, case transforms, LaTeX, path normalization hotkeys",
+      "doubletapspaceperiod.ahk — double-tap spacebar detection with timing and modifier awareness",
+      "main.ahk — modular entry point with include architecture",
+      "README.md — design principles, component docs, usage examples"
+    ],
+    "absent_sources": [
+      "No test files or test framework",
+      "No CI/CD configuration",
+      "No linter or type-checker configuration",
+      "No package management files (setup.py, requirements.txt, package.json)",
+      "No schema definition files (the schemas are inline in code)"
+    ]
+  },
+  "ambiguities_or_borderline_calls": [
+    {
+      "item": "AutoHotkey v2 proficiency scope",
+      "note": "The AHK code demonstrates real v2 syntax (ComObject, Critical, BlockInput, try/finally, hotstring options), but depth is hard to gauge without more complex scenarios like GUI building or DLL calls. Current evidence supports 'working proficiency in AHK v2 for productivity automation' but not 'advanced AHK development'."
+    },
+    {
+      "item": "Schema design as a transferable skill",
+      "note": "The YAML templates encode a sophisticated personal taxonomy (layer, unity_level, vector_direction, register, register_mode, pillar) but the schemas are inline string literals, not externalized definitions. This demonstrates schema thinking and metadata design intent, but not formal schema tooling (JSON Schema, YAML validators, etc.)."
+    },
+    {
+      "item": "Knowledge management system design",
+      "note": "The templates and backfill script imply a coherent knowledge system, but the system itself (Obsidian vault, query patterns, linking logic) is not in this repository. The skill demonstrated here is 'designing tooling to enforce structured metadata in a note vault', not 'building a knowledge management system'."
+    },
+    {
+      "item": "Error handling maturity",
+      "note": "Both Python scripts show careful error handling (timeouts, try/finally, stderr capture, lock cleanup), but there are no tests exercising error paths. The patterns are sound but unverified by automated testing."
+    },
+    {
+      "item": "RFC compliance of UUIDv7",
+      "note": "The implementation follows UUIDv7 structure (version nibble 7, RFC4122 variant bits, ms timestamp, counter+random), but without tests or a conformance suite, exact RFC compliance is claimed by code structure, not proven by verification."
+    }
+  ],
+  "overclaim_risks": [
+    {
+      "risk": "Claiming 'Python testing' or 'CI/CD pipeline design'",
+      "reason": "No tests or CI/CD exist in the repository. These skills are not demonstrated."
+    },
+    {
+      "risk": "Claiming 'cross-platform development'",
+      "reason": "The tooling is Windows-specific (AutoHotkey, LOCALAPPDATA, WScript.Shell, backslash paths). The Python code has a LOCALAPPDATA fallback but is not tested on other platforms."
+    },
+    {
+      "risk": "Claiming 'security engineering' from the lock file mechanism",
+      "reason": "The lock is a correctness mechanism for single-user workflows, not a security control. It prevents accidental concurrent state corruption, not adversarial access."
+    },
+    {
+      "risk": "Claiming 'schema engineering' from inline YAML templates",
+      "reason": "The templates show schema thinking but use hardcoded strings, not externalized or validated schema definitions. The skill is closer to 'designing structured metadata templates' than 'schema engineering'."
+    }
+  ],
+  "transferable_signal_notes": [
+    {
+      "signal": "Dry-run-by-default CLI design pattern",
+      "transferability": "Directly applicable to any mutation-heavy CLI tool, deployment script, or infrastructure automation. Shows safety-first design instinct."
+    },
+    {
+      "signal": "Atomic file write via temp-file-plus-rename",
+      "transferability": "Standard pattern in database engines, package managers, and config management tools. Demonstrates awareness of filesystem atomicity guarantees."
+    },
+    {
+      "signal": "Cross-process monotonic state with file locking",
+      "transferability": "Applicable to distributed ID generation, sequence counters, and any scenario requiring ordering guarantees across process boundaries."
+    },
+    {
+      "signal": "Boundary validation at generation and consumption",
+      "transferability": "Shows defense-in-depth thinking: validating output at the producer and re-validating at the consumer. Relevant to API design, data pipelines, and integration work."
+    },
+    {
+      "signal": "Cross-language tool orchestration via subprocess/COM",
+      "transferability": "Demonstrates practical integration skills applicable to polyglot systems, build tooling, and workflow automation."
+    }
+  ],
+  "dedupe_notes_for_cross_repo_merge": [
+    "S01 (UUIDv7 bit manipulation) may overlap if uuid generation appears in other repos—check for identical implementation vs. library usage.",
+    "S05 (atomic file writes) is a common pattern; check if other repos also implement it or use library equivalents.",
+    "S06 (dry-run CLI pattern) likely recurs across the user's tool-building repos; consolidate under a single canonical skill entry with multiple evidence sources.",
+    "S08 (bulk file processing with stats) may overlap with any vault/file-management tooling in other repos.",
+    "S21 (regex UUID validation) is specific enough to this UUID workflow that it likely won't duplicate, but check against any API validation patterns elsewhere.",
+    "Schema-versioned metadata (S10) may recur if other repos also define note/document schemas—merge evidence rather than creating duplicate skill entries."
+  ],
+  "main_takeaway": "This repository demonstrates precise, implementation-level skills in deterministic ID generation (UUIDv7 from scratch with monotonic state and locking), safe bulk file mutation (atomic writes, dry-run-by-default CLI), cross-language tool orchestration (AHK-to-Python via COM), and structured metadata template design for knowledge management. The strongest signals are in filesystem safety patterns, boundary validation discipline, and the dry-run-first mutation design. The weakest areas are the absence of testing, CI/CD, and externalized schema definitions. The skills are Windows-scoped but the underlying patterns (atomic writes, lock files, subprocess orchestration, validation-at-boundaries) transfer broadly."
+}
