@@ -6,7 +6,7 @@
     {
       "id": "S01",
       "skill": "Implementing UUIDv7 generation from scratch using bit manipulation",
-      "evidence": "tools_uuid7.py builds a 128-bit UUID from 48-bit ms timestamp, 12-bit counter, version/variant bits, and 62-bit random suffix using bitwise shifts and masks (line 95: `u = (ts_ms << 80) | (0x7 << 76) | (ctr << 64) | (0x2 << 62) | rand_b`).",
+      "evidence": "tools_uuid7.py builds a 128-bit UUID from 48-bit millisecond timestamp, 12-bit counter, version/variant bits, and 62-bit random suffix using bitwise shifts and masks (line 95: `u = (ts_ms << 80) | (0x7 << 76) | (ctr << 64) | (0x2 << 62) | rand_b`).",
       "evidence_strength": "strong",
       "files": ["tools_uuid7.py:88-104"]
     },
