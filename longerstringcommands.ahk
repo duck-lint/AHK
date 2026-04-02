@@ -125,3 +125,31 @@
     Clipboard := saved
     saved := ""
 }
+
+^+s:: {  ; Ctrl+Shift+S → lower_snake_case
+    saved := ClipboardAll()
+    ClipWait 0.2
+    clip := A_Clipboard
+
+    ; Step 1: break camelCase / PascalCase → camel_Case
+    clip := RegExReplace(clip, "([a-z0-9])([A-Z])", "$1_$2")
+
+    ; Step 2: replace spaces & hyphens with underscores
+    clip := RegExReplace(clip, "[\s\-]+", "_")
+
+    ; Step 3: remove non-alphanumeric/underscore
+    clip := RegExReplace(clip, "[^a-zA-Z0-9_]", "")
+
+    ; Step 4: collapse multiple underscores
+    clip := RegExReplace(clip, "_{2,}", "_")
+
+    ; Step 5: trim leading/trailing underscores
+    clip := RegExReplace(clip, "^_|_$")
+
+    ; Step 6: lowercase
+    A_Clipboard := StrLower(clip)
+
+    Send "{Blind}^v"
+    Clipboard := saved
+    saved := ""
+}
